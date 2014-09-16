@@ -13,9 +13,9 @@ public class MyApplet extends PApplet {
 	@Override
 	public void setup() {
 		size(600,600);
-		com.jking31cs.trianglehalving.Point p1 = new Point(300,300);
-		com.jking31cs.trianglehalving.Point p2 = new Point(300,400);
-		com.jking31cs.trianglehalving.Point p3 = new Point(400,400);
+		Point p1 = new Point(300,300);
+		Point p2 = new Point(300,400);
+		Point p3 = new Point(400,400);
 		
 		triangle = new Triangle(p1,p2,p3);
 	}

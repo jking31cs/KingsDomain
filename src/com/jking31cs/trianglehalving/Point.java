@@ -12,4 +12,8 @@ public class Point {
 		this.x = x;
 		this.y = y;
 	}
+	
+	public Vector asVec() {
+		return new Vector(x,y);
+	}
 }

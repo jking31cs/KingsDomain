@@ -1,5 +1,10 @@
 package com.jking31cs.trianglehalving;
 
+import static processing.core.PApplet.*;
+/**
+ * Simple Triangle class.
+ * @author jking31
+ */
 public class Triangle {
 	public final Point p1;
 	public final Point p2;
@@ -17,4 +22,12 @@ public class Triangle {
 		this.e3 = new Edge(p3,p1);
 	}
 
+	/**
+	 * Using Heron's Formula.
+	 * @return
+	 */
+	public float area() {
+		float s = (e1.length() + e2.length() + e3.length()) * .5f;
+		return sqrt(s*(s-e1.length())*(s-e2.length())*(s-e3.length()));
+	}
 }
