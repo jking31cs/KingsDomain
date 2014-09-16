@@ -1,5 +1,9 @@
 package com.jking31cs.trianglehalving;
 
+/**
+ * Simple class to hold a point in 2D space.
+ * @author jking31
+ */
 public class Point {
 	public final Float x;
 	public final Float y;
