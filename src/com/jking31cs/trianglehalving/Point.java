@@ -16,4 +16,17 @@ public class Point {
 	public Vector asVec() {
 		return new Vector(x,y);
 	}
+	
+	public Point add(Vector v) {
+		return new Point(x+v.x, y+v.y);
+	}
+	
+	public float distTo(Point p) {
+		return new Point(p.x-x, p.y-y).asVec().getMag();
+	}
+	
+	@Override
+	public String toString() {
+		return "Point: (" + x + "," + y + ")";
+	}
 }

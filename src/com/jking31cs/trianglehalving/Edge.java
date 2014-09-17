@@ -33,7 +33,14 @@ public class Edge {
 			return null;
 		}
 		return new Point(xTop/bot, yTop/bot);
-		
-				
+	}
+	
+	/**
+	 * Finds the midpoint of the edge.
+	 * @return
+	 */
+	public Point midPoint() {
+		Vector v = p1.asVec().add(p2.asVec()).mul(.5f);
+		return new Point(v.x,v.y);
 	}
 }
