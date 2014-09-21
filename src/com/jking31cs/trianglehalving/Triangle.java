@@ -1,6 +1,8 @@
 package com.jking31cs.trianglehalving;
 
 import static processing.core.PApplet.*;
+
+import java.util.Arrays;
 /**
  * Simple Triangle class.
  * @author jking31
@@ -31,6 +33,92 @@ public class Triangle {
 		return sqrt(s*(s-e1.length())*(s-e2.length())*(s-e3.length()));
 	}
 
+	/**
+	 * Finds centroid via average.
+	 * @return
+	 */
+	public Point centroid() {
+		Vector v = p1.asVec().add(p2.asVec()).add(p3.asVec()).mul(1/3f);
+		return new Point(v.x, v.y);
+	}
+
+	/**
+	 * Finds shortest possible cut via ball-morph.
+	 * @return
+	 */
+	public Edge shortestCut() {
+		float minCut = Float.MAX_VALUE;
+		Point startMinCut = null;
+		Point endMinCut = null;
+		for (Point p : Arrays.asList(p1, p2, p3)) {
+			Edge startEdge;
+			Edge endEdge;
+
+			if (p.equals(p1)) {
+				startEdge = e3;
+				endEdge = e1;
+			} else if (p.equals(p2)) {
+				startEdge = e1;
+				endEdge = e2;
+			} else {
+				startEdge = e2;
+				endEdge = e3;
+			}
+			
+			Point startCutPoint = startEdge.midPoint();
+			Edge edgeToLookAt = startEdge;
+			Vector r1Vec = startEdge.asVec().rotate(PI/2).normalize();
+			boolean smallCutFound = false;
+			while (!smallCutFound) {
+				boolean match = false;
+				Edge tempEdge = endEdge;
+				Point endCutPoint = endEdge.midPoint();
+				Vector rVec = endEdge.asVec().rotate(PI/2).normalize();
+				Point center = null;
+				while (!match) {
+					center = new Edge(endCutPoint, endCutPoint.add(rVec))
+							.intersectionPoint(new Edge(startCutPoint, startCutPoint.add(r1Vec)));
+					if (abs(center.distTo(startCutPoint) - center.distTo(endCutPoint)) <= .5f) {
+						match = true;
+					} else if (center.distTo(startCutPoint) > center.distTo(endCutPoint)) {
+						tempEdge = new Edge(tempEdge.p1, endCutPoint);
+						endCutPoint = tempEdge.midPoint();
+					} else {
+						tempEdge = new Edge(endCutPoint, tempEdge.p2);
+						endCutPoint = tempEdge.midPoint();
+					}
+					if (abs(tempEdge.p1.distTo(tempEdge.p2)) <= .001) {
+						break;
+					}
+				}
+				if (abs(tempEdge.p1.distTo(tempEdge.p2)) <= .001) {
+					break;
+				}
+				Triangle halfTriangle = new Triangle(startCutPoint, p, endCutPoint);
+				if (abs(halfTriangle.area()*2f - area()) <= 5f) {
+					smallCutFound = true;
+					minCut = Math.min(minCut, startCutPoint.distTo(endCutPoint));
+					startMinCut = startCutPoint;
+					endMinCut = endCutPoint;
+					
+				} else if (halfTriangle.area()*2f > area()) {
+					edgeToLookAt = new Edge(startCutPoint, edgeToLookAt.p2);
+					startCutPoint = edgeToLookAt.midPoint();
+				} else {
+					edgeToLookAt = new Edge(edgeToLookAt.p1, startCutPoint);
+					startCutPoint = edgeToLookAt.midPoint();
+				}
+				if (abs(edgeToLookAt.p1.distTo(edgeToLookAt.p2)) <= .001) {
+					break;
+				}
+			}
+		}	
+		if (startMinCut != null && endMinCut != null) {
+			return new Edge(startMinCut, endMinCut);
+		}
+		return null;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
