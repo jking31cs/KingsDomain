@@ -1,6 +1,6 @@
+import com.jking31cs.trianglehalving.ConvexShape;
 import com.jking31cs.trianglehalving.Edge;
 import com.jking31cs.trianglehalving.Point;
-import com.jking31cs.trianglehalving.Triangle;
 
 import processing.core.PApplet;
 
@@ -9,7 +9,7 @@ public class MyApplet extends PApplet {
 
 	private static final long serialVersionUID = 1L;
 
-	Triangle triangle;
+	ConvexShape triangle;
 	
 	boolean changeP1,changeP2,changeP3;
 	
@@ -20,7 +20,7 @@ public class MyApplet extends PApplet {
 		Point p2 = new Point(400,450);
 		Point p3 = new Point(250,375);
 		
-		triangle = new Triangle(p1,p2,p3);
+		triangle = new ConvexShape(p1,p2,p3);
 	}
 	
 	@Override
@@ -33,13 +33,13 @@ public class MyApplet extends PApplet {
 	@Override
 	public void mousePressed() {
 		Point mousePoint = new Point(mouseX, mouseY);
-		if (abs(mousePoint.distTo(triangle.p1)) <= 5) {
+		if (abs(mousePoint.distTo(triangle.points.get(0))) <= 5) {
 			changeP1 = true;
 		}
-		if (abs(mousePoint.distTo(triangle.p2)) <= 5) {
+		if (abs(mousePoint.distTo(triangle.points.get(1))) <= 5) {
 			changeP2 = true;
 		}
-		if (abs(mousePoint.distTo(triangle.p3)) <= 5) {
+		if (abs(mousePoint.distTo(triangle.points.get(2))) <= 5) {
 			changeP3 = true;
 		}
 	}
@@ -47,13 +47,13 @@ public class MyApplet extends PApplet {
 	@Override
 	public void mouseDragged() {
 		if (changeP1) {
-			triangle = new Triangle(new Point(mouseX, mouseY), triangle.p2, triangle.p3);
+			triangle = new ConvexShape(new Point(mouseX, mouseY), triangle.points.get(1), triangle.points.get(2));
 		}
 		if (changeP2) {
-			triangle = new Triangle(triangle.p1, new Point(mouseX, mouseY), triangle.p3);
+			triangle = new ConvexShape(triangle.points.get(0), new Point(mouseX, mouseY), triangle.points.get(2));
 		}
 		if (changeP3) {
-			triangle = new Triangle(triangle.p1, triangle.p2, new Point(mouseX, mouseY));
+			triangle = new ConvexShape(triangle.points.get(0), triangle.points.get(1), new Point(mouseX, mouseY));
 		}
 	}
 	
@@ -69,31 +69,31 @@ public class MyApplet extends PApplet {
 		//Points
 		stroke(255,0,0);
 		fill(255);
-		ellipse(triangle.p1.x,triangle.p1.y,10,10);
-		ellipse(triangle.p2.x,triangle.p2.y,10,10);
-		ellipse(triangle.p3.x,triangle.p3.y,10,10);
+		ellipse(triangle.points.get(0).x,triangle.points.get(0).y,10,10);
+		ellipse(triangle.points.get(1).x,triangle.points.get(1).y,10,10);
+		ellipse(triangle.points.get(2).x,triangle.points.get(2).y,10,10);
 		
 		//Labels on vertices
 		fill(0);
 		this.textSize(12);
-		this.text("P1", triangle.p1.x + 10, triangle.p1.y -10);
-		this.text("P2", triangle.p2.x + 10, triangle.p2.y -10);
-		this.text("P3", triangle.p3.x + 10, triangle.p3.y -10);
+		this.text("P1", triangle.points.get(0).x + 10, triangle.points.get(0).y -10);
+		this.text("P2", triangle.points.get(1).x + 10, triangle.points.get(1).y -10);
+		this.text("P3", triangle.points.get(2).x + 10, triangle.points.get(2).y -10);
 		
-		//Centroid
-		fill(255,255,0);
-		Point centroid = triangle.centroid();
-		ellipse(centroid.x, centroid.y, 5,5);
+//		//Centroid
+//		fill(255,255,0);
+//		Point centroid = triangle.centroid();
+//		ellipse(centroid.x, centroid.y, 5,5);
 
 		//Edges
 		stroke(0);
-		line(triangle.e1.p1.x,triangle.e1.p1.y,triangle.e1.p2.x,triangle.e1.p2.y);
-		line(triangle.e2.p1.x,triangle.e2.p1.y,triangle.e2.p2.x,triangle.e2.p2.y);
-		line(triangle.e3.p1.x,triangle.e3.p1.y,triangle.e3.p2.x,triangle.e3.p2.y);
+		line(triangle.edges.get(0).p1.x,triangle.edges.get(0).p1.y,triangle.edges.get(0).p2.x,triangle.edges.get(0).p2.y);
+		line(triangle.edges.get(1).p1.x,triangle.edges.get(1).p1.y,triangle.edges.get(1).p2.x,triangle.edges.get(1).p2.y);
+		line(triangle.edges.get(2).p1.x,triangle.edges.get(2).p1.y,triangle.edges.get(2).p2.x,triangle.edges.get(2).p2.y);
 		
 		//Smallest Cut
 		stroke(0,0,255);
-		Edge cut = triangle.shortestCut();
+		Edge cut = triangle.minCut();
 		if (cut != null) line(cut.p1.x, cut.p1.y, cut.p2.x, cut.p2.y);
 		
 		//Perpendicular Lines 
