@@ -86,6 +86,9 @@ public class ConvexShape {
 				while (!match) {
 					center = new Edge(endCutPoint, endCutPoint.add(rVec))
 							.intersectionPoint(new Edge(startCutPoint, startCutPoint.add(r1Vec)));
+					if (center == null) {
+						break;
+					}
 					if (abs(center.distTo(startCutPoint) - center.distTo(endCutPoint)) <= .5f) {
 						match = true;
 					} else if (center.distTo(startCutPoint) > center.distTo(endCutPoint)) {
@@ -99,10 +102,9 @@ public class ConvexShape {
 						break;
 					}
 				}
-				if (abs(tempEdge.p1.distTo(tempEdge.p2)) <= .001) {
+				if (!match) {
 					break;
 				}
-				
 				int beginIndex = edges.indexOf(startEdge);
 				int endIndex = edges.indexOf(endEdge);
 				List<Point> newShapePoints = new ArrayList<>();

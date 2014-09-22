@@ -11,7 +11,7 @@ public class MyApplet extends PApplet {
 
 	ConvexShape triangle;
 	
-	boolean changeP1,changeP2,changeP3;
+	boolean changeP1,changeP2,changeP3,changeP4;
 	
 	@Override
 	public void setup() {
@@ -19,8 +19,9 @@ public class MyApplet extends PApplet {
 		Point p1 = new Point(300,300);
 		Point p2 = new Point(400,450);
 		Point p3 = new Point(250,375);
+		Point p4 = new Point(100,150);
 		
-		triangle = new ConvexShape(p1,p2,p3);
+		triangle = new ConvexShape(p1,p2,p3,p4);
 	}
 	
 	@Override
@@ -42,24 +43,30 @@ public class MyApplet extends PApplet {
 		if (abs(mousePoint.distTo(triangle.points.get(2))) <= 5) {
 			changeP3 = true;
 		}
+		if (abs(mousePoint.distTo(triangle.points.get(3))) <= 5) {
+			changeP4 = true;
+		}
 	}
 	
 	@Override
 	public void mouseDragged() {
 		if (changeP1) {
-			triangle = new ConvexShape(new Point(mouseX, mouseY), triangle.points.get(1), triangle.points.get(2));
+			triangle = new ConvexShape(new Point(mouseX, mouseY), triangle.points.get(1), triangle.points.get(2), triangle.points.get(3));
 		}
 		if (changeP2) {
-			triangle = new ConvexShape(triangle.points.get(0), new Point(mouseX, mouseY), triangle.points.get(2));
+			triangle = new ConvexShape(triangle.points.get(0), new Point(mouseX, mouseY), triangle.points.get(2), triangle.points.get(3));
 		}
 		if (changeP3) {
-			triangle = new ConvexShape(triangle.points.get(0), triangle.points.get(1), new Point(mouseX, mouseY));
+			triangle = new ConvexShape(triangle.points.get(0), triangle.points.get(1), new Point(mouseX, mouseY), triangle.points.get(3));
+		}
+		if (changeP4) {
+			triangle = new ConvexShape(triangle.points.get(0), triangle.points.get(1), triangle.points.get(2), new Point(mouseX, mouseY));
 		}
 	}
 	
 	@Override
 	public void mouseReleased() {
-		changeP1=changeP2=changeP3=false;
+		changeP1=changeP2=changeP3=changeP4=false;
 	}
 	
 	@Override
@@ -72,6 +79,7 @@ public class MyApplet extends PApplet {
 		ellipse(triangle.points.get(0).x,triangle.points.get(0).y,10,10);
 		ellipse(triangle.points.get(1).x,triangle.points.get(1).y,10,10);
 		ellipse(triangle.points.get(2).x,triangle.points.get(2).y,10,10);
+		ellipse(triangle.points.get(3).x,triangle.points.get(3).y,10,10);
 		
 		//Labels on vertices
 		fill(0);
@@ -79,6 +87,7 @@ public class MyApplet extends PApplet {
 		this.text("P1", triangle.points.get(0).x + 10, triangle.points.get(0).y -10);
 		this.text("P2", triangle.points.get(1).x + 10, triangle.points.get(1).y -10);
 		this.text("P3", triangle.points.get(2).x + 10, triangle.points.get(2).y -10);
+		this.text("P3", triangle.points.get(3).x + 10, triangle.points.get(3).y -10);
 		
 //		//Centroid
 //		fill(255,255,0);
@@ -90,11 +99,13 @@ public class MyApplet extends PApplet {
 		line(triangle.edges.get(0).p1.x,triangle.edges.get(0).p1.y,triangle.edges.get(0).p2.x,triangle.edges.get(0).p2.y);
 		line(triangle.edges.get(1).p1.x,triangle.edges.get(1).p1.y,triangle.edges.get(1).p2.x,triangle.edges.get(1).p2.y);
 		line(triangle.edges.get(2).p1.x,triangle.edges.get(2).p1.y,triangle.edges.get(2).p2.x,triangle.edges.get(2).p2.y);
+		line(triangle.edges.get(3).p1.x,triangle.edges.get(3).p1.y,triangle.edges.get(3).p2.x,triangle.edges.get(3).p2.y);
 		
 		//Smallest Cut
 		stroke(0,0,255);
 		Edge cut = triangle.minCut();
 		if (cut != null) line(cut.p1.x, cut.p1.y, cut.p2.x, cut.p2.y);
+		else System.out.println("Crap");
 		
 		//Perpendicular Lines 
 //		stroke(0,255,0);
