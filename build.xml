@@ -6,12 +6,18 @@
               as the first entry and export the buildfile again. --><project basedir="." default="build" name="TriangleHalving">
     <property environment="env"/>
     <property name="ECLIPSE_HOME" value="../../../../Applications/eclipse/"/>
+    <property name="junit.output.dir" value="junit"/>
     <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+    <path id="JUnit 4.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}plugins/org.junit_4.11.0.v201303080030/junit.jar"/>
+        <pathelement location="${ECLIPSE_HOME}plugins/org.hamcrest.core_1.3.0.v201303031735.jar"/>
+    </path>
     <path id="TriangleHalving.classpath">
         <pathelement location="bin"/>
         <pathelement location="../../Desktop/Processing-Jars/core.jar"/>
+        <path refid="JUnit 4.libraryclasspath"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -49,10 +55,50 @@
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
     </target>
+    <target name="ConvexShapeTest">
+        <mkdir dir="${junit.output.dir}"/>
+        <junit fork="yes" printsummary="withOutAndErr">
+            <formatter type="xml"/>
+            <test name="com.jking31cs.trianglehalving.ConvexShapeTest" todir="${junit.output.dir}"/>
+            <classpath refid="TriangleHalving.classpath"/>
+        </junit>
+    </target>
+    <target name="MathPic">
+        <java classname="sun.applet.AppletViewer" dir="." failonerror="true" fork="yes">
+            <arg line="MathPic.html"/>
+            <classpath refid="TriangleHalving.classpath"/>
+        </java>
+    </target>
     <target name="MyApplet">
         <java classname="sun.applet.AppletViewer" dir="." failonerror="true" fork="yes">
             <arg line="MyApplet.html"/>
             <classpath refid="TriangleHalving.classpath"/>
         </java>
+    </target>
+    <target name="TriangleExample">
+        <java classname="sun.applet.AppletViewer" dir="." failonerror="true" fork="yes">
+            <arg line="TriangleExample.html"/>
+            <classpath refid="TriangleHalving.classpath"/>
+        </java>
+    </target>
+    <target name="FourPointExample">
+        <java classname="sun.applet.AppletViewer" dir="." failonerror="true" fork="yes">
+            <arg line="FourPointExample.html"/>
+            <classpath refid="TriangleHalving.classpath"/>
+        </java>
+    </target>
+    <target name="SixPointExample">
+        <java classname="sun.applet.AppletViewer" dir="." failonerror="true" fork="yes">
+            <arg line="SixPointExample.html"/>
+            <classpath refid="TriangleHalving.classpath"/>
+        </java>
+    </target>
+    <target name="junitreport">
+        <junitreport todir="${junit.output.dir}">
+            <fileset dir="${junit.output.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${junit.output.dir}"/>
+        </junitreport>
     </target>
 </project>
