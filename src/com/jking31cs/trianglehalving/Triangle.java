@@ -6,6 +6,7 @@ import java.util.Arrays;
 /**
  * Simple Triangle class.
  * @author jking31
+ * @Deprecated  Use ConvexShape instead.
  */
 public class Triangle {
 	public final Point p1;
