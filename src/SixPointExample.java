@@ -17,7 +17,7 @@ public class SixPointExample extends PApplet {
 		size(600,600);
 		Point p1 = new Point(284.5583f, 357.6292f);
 		Point p2 = new Point(300,300);
-		Point p3 = new Point(350, 380);
+		Point p3 = new Point(350, 250);
 		Point p4 = new Point(400,400);
 		Point p5 = new Point(342.3708f,415.4417f);
 		Point p6 = new Point(325, 400);
@@ -130,12 +130,16 @@ public class SixPointExample extends PApplet {
 		//Smallest Cut
 		stroke(0,0,255);
 		Edge cut1 = mainShape.minCut(mainShape.area() / 4f);
-		if (cut1 != null) line(cut1.p1.x, cut1.p1.y, cut1.p2.x, cut1.p2.y);
-		ConvexShape inner1 = mainShape.shapeFromCut(cut1, true);
-		Edge cut2 = inner1.minCut(mainShape.area() / 4f);
-		if (cut2 != null) line(cut2.p1.x, cut2.p1.y, cut2.p2.x, cut2.p2.y);
-		Edge cut3 = inner1.shapeFromCut(cut2, true).minCut(mainShape.area() / 4f);
-		if (cut3 != null) line(cut3.p1.x, cut3.p1.y, cut3.p2.x, cut3.p2.y);	
+		if (cut1 != null) {
+			line(cut1.p1.x, cut1.p1.y, cut1.p2.x, cut1.p2.y);
+			ConvexShape inner1 = mainShape.shapeFromCut(cut1, true);
+			Edge cut2 = inner1.minCut(mainShape.area() / 4f);
+			if (cut2 != null) {
+				line(cut2.p1.x, cut2.p1.y, cut2.p2.x, cut2.p2.y);
+				Edge cut3 = inner1.shapeFromCut(cut2, true).minCut(mainShape.area() / 4f);
+				if (cut3 != null) line(cut3.p1.x, cut3.p1.y, cut3.p2.x, cut3.p2.y);	
+			}
+		}
 		
 	}
 	

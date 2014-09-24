@@ -74,15 +74,19 @@ public class TriangleExample extends PApplet {
 		
 		Edge cut1 = triangle.minCut(targetArea);
 		stroke(0,0,255);
-		if (cut1 != null) drawLine(cut1);
+		if (cut1 != null) {
+			drawLine(cut1);
+			ConvexShape inner1 = triangle.shapeFromCut(cut1, true);
+			Edge cut2 = inner1.minCut(targetArea);
+			if (cut2 != null) {
+				drawLine(cut2);
+				ConvexShape inner2 = inner1.shapeFromCut(cut2, true);
+				Edge cut3 = inner2.minCut(targetArea);
+				if (cut3 != null) drawLine(cut3);
+			}
+			
+		}
 		
-		ConvexShape inner1 = triangle.shapeFromCut(cut1, true);
-		Edge cut2 = inner1.minCut(targetArea);
-		if (cut2 != null) drawLine(cut2);
-		
-		ConvexShape inner2 = inner1.shapeFromCut(cut2, true);
-		Edge cut3 = inner2.minCut(targetArea);
-		if (cut3 != null) drawLine(cut3);
 		
 //		stroke(0,255,0);
 //		Vector v = triangle.points.get(0).asVec().add(triangle.points.get(1).asVec()).add(triangle.points.get(2).asVec()).mul(1/3f);

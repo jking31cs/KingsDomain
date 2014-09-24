@@ -99,12 +99,16 @@ public class FourPointExample extends PApplet {
 		//Smallest Cut
 		stroke(0,0,255);
 		Edge cut1 = mainShape.minCut(mainShape.area() / 4f);
-		if (cut1 != null) line(cut1.p1.x, cut1.p1.y, cut1.p2.x, cut1.p2.y);
-		ConvexShape inner1 = mainShape.shapeFromCut(cut1, true);
-		Edge cut2 = inner1.minCut(mainShape.area() / 4f);
-		if (cut2 != null) line(cut2.p1.x, cut2.p1.y, cut2.p2.x, cut2.p2.y);
-		Edge cut3 = inner1.shapeFromCut(cut2, true).minCut(mainShape.area() / 4f);
-		if (cut3 != null) line(cut3.p1.x, cut3.p1.y, cut3.p2.x, cut3.p2.y);
+		if (cut1 != null) {
+			line(cut1.p1.x, cut1.p1.y, cut1.p2.x, cut1.p2.y);
+			ConvexShape inner1 = mainShape.shapeFromCut(cut1, true);
+			Edge cut2 = inner1.minCut(mainShape.area() / 4f);
+			if (cut2 != null) {
+				line(cut2.p1.x, cut2.p1.y, cut2.p2.x, cut2.p2.y);
+				Edge cut3 = inner1.shapeFromCut(cut2, true).minCut(mainShape.area() / 4f);
+				if (cut3 != null) line(cut3.p1.x, cut3.p1.y, cut3.p2.x, cut3.p2.y);
+			}
+		}
 		
 		
 		
