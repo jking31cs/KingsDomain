@@ -1,6 +1,7 @@
 import com.jking31cs.trianglehalving.ConvexShape;
 import com.jking31cs.trianglehalving.Edge;
 import com.jking31cs.trianglehalving.Point;
+import com.jking31cs.trianglehalving.Vector;
 
 import processing.core.PApplet;
 
@@ -16,10 +17,10 @@ public class MyApplet extends PApplet {
 	@Override
 	public void setup() {
 		size(600,600);
-		Point p1 = new Point(300,300);
-		Point p2 = new Point(400,450);
-		Point p3 = new Point(250,375);
-		Point p4 = new Point(100,150);
+		Point p1 = new Point(284.5583f, 357.6292f);
+		Point p2 = new Point(300,300);
+		Point p3 = new Point(400,400);
+		Point p4 = new Point(342.3708f,415.4417f);
 		
 		triangle = new ConvexShape(p1,p2,p3,p4);
 	}
@@ -87,7 +88,7 @@ public class MyApplet extends PApplet {
 		this.text("P1", triangle.points.get(0).x + 10, triangle.points.get(0).y -10);
 		this.text("P2", triangle.points.get(1).x + 10, triangle.points.get(1).y -10);
 		this.text("P3", triangle.points.get(2).x + 10, triangle.points.get(2).y -10);
-		this.text("P3", triangle.points.get(3).x + 10, triangle.points.get(3).y -10);
+		this.text("P4", triangle.points.get(3).x + 10, triangle.points.get(3).y -10);
 		
 //		//Centroid
 //		fill(255,255,0);
@@ -103,23 +104,22 @@ public class MyApplet extends PApplet {
 		
 		//Smallest Cut
 		stroke(0,0,255);
-		Edge cut = triangle.minCut();
+		Edge cut = triangle.minCut(triangle.area() / 2);
 		if (cut != null) line(cut.p1.x, cut.p1.y, cut.p2.x, cut.p2.y);
-		else System.out.println("Crap");
 		
 		//Perpendicular Lines 
 //		stroke(0,255,0);
-//		Vector perp1 = triangle.e1.asVec().rotate(PI/2).normalize();
-//		Point pp1 = triangle.e1.midPoint().add(perp1.mul(500f));
-//		line(triangle.e1.midPoint().x, triangle.e1.midPoint().y, pp1.x, pp1.y);
+//		Vector perp1 = triangle.edges.get(0).asVec().rotate(PI/2).normalize();
+//		Point pp1 = triangle.edges.get(0).midPoint().add(perp1.mul(500f));
+//		line(triangle.edges.get(0).midPoint().x, triangle.edges.get(0).midPoint().y, pp1.x, pp1.y);
 //		
-//		Vector perp2 = triangle.e2.asVec().rotate(PI/2).normalize();
-//		Point pp2 = triangle.e2.midPoint().add(perp2.mul(500f));
-//		line(triangle.e2.midPoint().x, triangle.e2.midPoint().y, pp2.x, pp2.y); 
+//		Vector perp2 = triangle.edges.get(1).asVec().rotate(PI/2).normalize();
+//		Point pp2 = triangle.edges.get(1).midPoint().add(perp2.mul(500f));
+//		line(triangle.edges.get(1).midPoint().x, triangle.edges.get(1).midPoint().y, pp2.x, pp2.y); 
 //		
-//		Vector perp3 = triangle.e3.asVec().rotate(PI/2).normalize();
-//		Point pp3 = triangle.e3.midPoint().add(perp3.mul(500f));
-//		line(triangle.e3.midPoint().x, triangle.e3.midPoint().y, pp3.x, pp3.y); 
+//		Vector perp3 = triangle.edges.get(2).asVec().rotate(PI/2).normalize();
+//		Point pp3 = triangle.edges.get(2).midPoint().add(perp3.mul(500f));
+//		line(triangle.edges.get(2).midPoint().x, triangle.edges.get(2).midPoint().y, pp3.x, pp3.y); 
 		
 		
 		

@@ -64,7 +64,7 @@ public class ConvexShape {
 	 * minimum of all possible cuts.
 	 * @return
 	 */
-	public Edge minCut() {
+	public Edge minCut(float targetArea) {
 		float minCut = Float.MAX_VALUE;
 		Point startMinCut = null, 
 				endMinCut = null;
@@ -83,50 +83,51 @@ public class ConvexShape {
 				Point endCutPoint = endEdge.midPoint();
 				Vector rVec = endEdge.asVec().rotate(PI/2).normalize();
 				Point center = null;
-				while (!match) {
-					center = new Edge(endCutPoint, endCutPoint.add(rVec))
-							.intersectionPoint(new Edge(startCutPoint, startCutPoint.add(r1Vec)));
-					if (center == null) {
-						break;
-					}
-					if (abs(center.distTo(startCutPoint) - center.distTo(endCutPoint)) <= .5f) {
-						match = true;
-					} else if (center.distTo(startCutPoint) > center.distTo(endCutPoint)) {
-						tempEdge = new Edge(tempEdge.p1, endCutPoint);
-						endCutPoint = tempEdge.midPoint();
-					} else {
-						tempEdge = new Edge(endCutPoint, tempEdge.p2);
-						endCutPoint = tempEdge.midPoint();
-					}
-					if (abs(tempEdge.p1.distTo(tempEdge.p2)) <= .001) {
-						break;
+				//Weird Situation where rVec and r1Vec are parallel;
+				if (abs(rVec.vectorProduct(r1Vec)) <= 0.001f) {
+					endCutPoint = new Edge(startCutPoint, startCutPoint.add(r1Vec)).intersectionPoint(tempEdge);
+					center = new Edge(startCutPoint, endCutPoint).midPoint();
+					match = true;
+				} else {
+					while (!match) {
+						center = new Edge(endCutPoint, endCutPoint.add(rVec))
+								.intersectionPoint(new Edge(startCutPoint, startCutPoint.add(r1Vec)));
+						
+						if (center == null) {
+							break;
+						}
+						if (abs(center.distTo(startCutPoint) - center.distTo(endCutPoint)) <= .05f) {
+							match = true;
+						} else if (center.distTo(startCutPoint) > center.distTo(endCutPoint)) {
+							tempEdge = new Edge(tempEdge.p1, endCutPoint);
+							endCutPoint = tempEdge.midPoint();
+						} else {
+							tempEdge = new Edge(endCutPoint, tempEdge.p2);
+							endCutPoint = tempEdge.midPoint();
+						}
+						if (abs(tempEdge.p1.distTo(tempEdge.p2)) <= .001) {
+							break;
+						}
 					}
 				}
+				
 				if (!match) {
-					break;
+					edgeToLookAt = new Edge(startCutPoint, edgeToLookAt.p2);
+					startCutPoint = edgeToLookAt.midPoint();
+					if (abs(edgeToLookAt.p1.distTo(edgeToLookAt.p2)) <= .001) {
+						break;
+					}
+					continue;
 				}
-				int beginIndex = edges.indexOf(startEdge);
-				int endIndex = edges.indexOf(endEdge);
-				List<Point> newShapePoints = new ArrayList<>();
-				newShapePoints.add(startCutPoint);
-				newShapePoints.add(startEdge.p2);
-				for (int i = beginIndex+1; i < endIndex; i++) {
-					Edge e = edges.get(i);
-					newShapePoints.add(e.p1);
-					newShapePoints.add(e.p2);
-				}
-				if (startEdge.p2 != endEdge.p1) newShapePoints.add(endEdge.p1);
-				newShapePoints.add(endCutPoint);
 				
-				ConvexShape newShape = new ConvexShape(newShapePoints);
+				ConvexShape newShape = shapeFromCut(new Edge(startCutPoint, endCutPoint), false);
 				
-				if (abs(newShape.area()*2f - area()) <= 5f) {
+				if (abs(newShape.area() - targetArea) <= 10f) {
 					smallCutFound = true;
 					minCut = Math.min(minCut, startCutPoint.distTo(endCutPoint));
 					startMinCut = startCutPoint;
 					endMinCut = endCutPoint;
-					
-				} else if (newShape.area()*2f > area()) {
+				} else if (newShape.area() > targetArea) {
 					edgeToLookAt = new Edge(startCutPoint, edgeToLookAt.p2);
 					startCutPoint = edgeToLookAt.midPoint();
 				} else {
@@ -140,6 +141,56 @@ public class ConvexShape {
 		}
 		if (startMinCut == null || endMinCut == null) return null;
 		return new Edge(startMinCut, endMinCut);
+	}
+	
+	public ConvexShape shapeFromCut(Edge cut, boolean opposite) {
+		Edge startEdge = null, 
+			 endEdge = null;
+		for (Edge e : edges) {
+			Vector v1 = e.asVec().normalize();
+			Vector v2 = new Edge(cut.p1, e.p2).asVec().normalize();
+			Vector v3 = new Edge(e.p1, cut.p2).asVec().normalize();
+			if (abs(v1.vectorProduct(v2)) < .005f) {
+				if (opposite) {
+					endEdge = e;
+				} else {
+					startEdge = e;					
+				}
+			}
+			if (abs(v1.vectorProduct(v3)) < .005f) {
+				if (opposite) {
+					startEdge = e;
+				} else {
+					endEdge = e;					
+				}
+			}
+		}
+		if (startEdge == null || endEdge == null) {
+			return null;
+		}
+		int beginIndex = edges.indexOf(startEdge);
+		int endIndex = edges.indexOf(endEdge);
+		List<Point> newShapePoints = new ArrayList<>();
+		if (opposite) {
+			newShapePoints.add(cut.p2);
+		} else {
+			newShapePoints.add(cut.p1);			
+		}
+		int i = beginIndex + 1;
+		while (i % edges.size() != endIndex) {
+			Edge e = edges.get(i % edges.size());
+			newShapePoints.add(e.p1);
+			newShapePoints.add(e.p2);
+			i++;			
+		}
+		if (abs(startEdge.p2.distTo(endEdge.p1)) <=.05f) newShapePoints.add(endEdge.p1);
+		if (opposite) {
+			newShapePoints.add(cut.p1);
+		} else {
+			newShapePoints.add(cut.p2);
+		}
+		
+		return new ConvexShape(newShapePoints);
 	}
 
 	/**
